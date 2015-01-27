@@ -17,10 +17,45 @@ Extend SPJobDefinition
 ----------------------
 First thing you need to do is create a new class that extends SPJobDefinition.
 Then create your three constructors and override execute method.
-{insert code}
+
+{% highlight c# %}
+namespace somenamespace
+{
+
+  public class MyTimerJobExecution : SPJobDefinition
+  {
+    public MyTimerJobExecution() { }
+
+    public MyTimerJobExecution(string jobName, SPService service)
+    : base(jobName, service, null, SPJobLockType.None)
+    {
+      this.Title = jobName;
+    }
+
+    public MyTimerJobExecution(string jobName, SPWebApplication webapp)
+    : base(jobName, webapp, null, SPJobLockType.ContentDatabase)
+    {
+      this.Title = jobName;
+    }
+
+    public override void Execute(Guid contentDbId)
+    {
+      try
+      {
+        // execute your logic here
+      }
+      catch (Exception ex)
+      {
+        // do your logging here
+        throw;
+      }
+    }
+  }
+}
+{% endhighlight %}
 
 In this case we will be creating a feature with Web Application scope, which will allow us in a round about way to retrieve the web context derived from the web application context.
-{insert code}
+
 
 Create the Event Receiver
 -------------------------

@@ -3,10 +3,12 @@
 <head>
    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
    <title>Installing custom Timer Jobs in SharePoint 2013</title>
+
+   <link rel="stylesheet" href="/css/syntax.css" type="text/css" />
 </head>
 <body>
 
-  
+
   <div id="post">
 <h1 id="installing-custom-timer-jobs-in-sharepoint-2013">Installing custom Timer Jobs in SharePoint 2013</h1>
 
@@ -17,11 +19,43 @@
 
 <h2 id="extend-spjobdefinition">Extend SPJobDefinition</h2>
 <p>First thing you need to do is create a new class that extends SPJobDefinition.
-Then create your three constructors and override execute method.
-{insert code}</p>
+Then create your three constructors and override execute method.</p>
 
-<p>In this case we will be creating a feature with Web Application scope, which will allow us in a round about way to retrieve the web context derived from the web application context.
-{insert code}</p>
+<div class="highlight"><pre><code class="language-c#" data-lang="c#"><span class="k">namespace</span> <span class="nn">somenamespace</span>
+<span class="p">{</span>
+
+  <span class="k">public</span> <span class="k">class</span> <span class="nc">MyTimerJobExecution</span> <span class="p">:</span> <span class="n">SPJobDefinition</span>
+  <span class="p">{</span>
+    <span class="k">public</span> <span class="nf">MyTimerJobExecution</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+
+    <span class="k">public</span> <span class="nf">MyTimerJobExecution</span><span class="p">(</span><span class="kt">string</span> <span class="n">jobName</span><span class="p">,</span> <span class="n">SPService</span> <span class="n">service</span><span class="p">)</span>
+    <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">jobName</span><span class="p">,</span> <span class="n">service</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="n">SPJobLockType</span><span class="p">.</span><span class="n">None</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="n">Title</span> <span class="p">=</span> <span class="n">jobName</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="nf">MyTimerJobExecution</span><span class="p">(</span><span class="kt">string</span> <span class="n">jobName</span><span class="p">,</span> <span class="n">SPWebApplication</span> <span class="n">webapp</span><span class="p">)</span>
+    <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">jobName</span><span class="p">,</span> <span class="n">webapp</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="n">SPJobLockType</span><span class="p">.</span><span class="n">ContentDatabase</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="n">Title</span> <span class="p">=</span> <span class="n">jobName</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">Execute</span><span class="p">(</span><span class="n">Guid</span> <span class="n">contentDbId</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="k">try</span>
+      <span class="p">{</span>
+        <span class="c1">// execute your logic here</span>
+      <span class="p">}</span>
+      <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="p">)</span>
+      <span class="p">{</span>
+        <span class="c1">// do your logging here</span>
+        <span class="k">throw</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+<p>In this case we will be creating a feature with Web Application scope, which will allow us in a round about way to retrieve the web context derived from the web application context.</p>
 
 <h2 id="create-the-event-receiver">Create the Event Receiver</h2>
 <p>Right click on your feature and select the option to create an event receiver class.
@@ -42,7 +76,7 @@ Then create your three constructors and override execute method.
 
 </div>
 
-  
+
 
 
 </body>

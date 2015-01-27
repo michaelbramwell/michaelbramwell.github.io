@@ -54,7 +54,33 @@ namespace somenamespace
 }
 {% endhighlight %}
 
-In this case we will be creating a feature with Web Application scope, which will allow us in a round about way to retrieve the web context derived from the web application context.
+In this case we will be creating a feature with Web Application scope, which will allow us in a round about way to retrieve the web context derived from the web application context. Notice that the second constructor takes a parameter of type SPService, this is what you might use if you had given your feature farm scope. In this instance we are interested in the third constructor as it takes a type of SPWebApplication as one of its parameters. We can then do something like the following in the above Execute method to derive a site url using the SPWebApplication context.
+
+{% highlight c# %}
+SPSecurity.RunWithElevatedPrivileges(delegate()
+{
+  SPWebApplication webApplication = this.Parent as SPWebApplication;  
+  SPContentDatabase contentDb = webApplication.ContentDatabases[contentDbId];
+
+  string siteUrl = string.Empty;
+
+  foreach (SPSite site in contentDb.Sites)
+  {
+
+    if (site.RootWeb.Title == Constants.RootWebTitle)
+    {
+      using (SPSite site = new SPSite(site.RootWeb.Url))
+      using (SPWeb web = site.OpenWeb())
+      {
+        // web context in here
+      }
+
+      break;
+
+    }
+  }
+});
+{% endhighlight %}
 
 
 Create the Event Receiver

@@ -21,45 +21,151 @@
 <p>First thing you need to do is create a new class that extends SPJobDefinition.
 Then create your three constructors and override execute method.</p>
 
-<div class="highlight"><pre><code class="language-c#" data-lang="c#"><span class="k">namespace</span> <span class="nn">somenamespace</span>
+<div class="highlight"><pre><code class="language-c#" data-lang="c#"><span class="k">public</span> <span class="k">class</span> <span class="nc">CustomTimerJobExecution</span> <span class="p">:</span> <span class="n">SPJobDefinition</span>
 <span class="p">{</span>
+  <span class="k">public</span> <span class="nf">CustomTimerJobExecution</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
 
-  <span class="k">public</span> <span class="k">class</span> <span class="nc">MyTimerJobExecution</span> <span class="p">:</span> <span class="n">SPJobDefinition</span>
+  <span class="k">public</span> <span class="nf">CustomTimerJobExecution</span><span class="p">(</span><span class="kt">string</span> <span class="n">jobName</span><span class="p">,</span> <span class="n">SPService</span> <span class="n">service</span><span class="p">)</span>
+  <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">jobName</span><span class="p">,</span> <span class="n">service</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="n">SPJobLockType</span><span class="p">.</span><span class="n">None</span><span class="p">)</span>
   <span class="p">{</span>
-    <span class="k">public</span> <span class="nf">MyTimerJobExecution</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+    <span class="k">this</span><span class="p">.</span><span class="n">Title</span> <span class="p">=</span> <span class="n">jobName</span><span class="p">;</span>
+  <span class="p">}</span>
 
-    <span class="k">public</span> <span class="nf">MyTimerJobExecution</span><span class="p">(</span><span class="kt">string</span> <span class="n">jobName</span><span class="p">,</span> <span class="n">SPService</span> <span class="n">service</span><span class="p">)</span>
-    <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">jobName</span><span class="p">,</span> <span class="n">service</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="n">SPJobLockType</span><span class="p">.</span><span class="n">None</span><span class="p">)</span>
+  <span class="k">public</span> <span class="nf">CustomTimerJobExecution</span><span class="p">(</span><span class="kt">string</span> <span class="n">jobName</span><span class="p">,</span> <span class="n">SPWebApplication</span> <span class="n">webapp</span><span class="p">)</span>
+  <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">jobName</span><span class="p">,</span> <span class="n">webapp</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="n">SPJobLockType</span><span class="p">.</span><span class="n">ContentDatabase</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="n">Title</span> <span class="p">=</span> <span class="n">jobName</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">Execute</span><span class="p">(</span><span class="n">Guid</span> <span class="n">contentDbId</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">try</span>
     <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="n">Title</span> <span class="p">=</span> <span class="n">jobName</span><span class="p">;</span>
+      <span class="c1">// execute your logic here</span>
     <span class="p">}</span>
-
-    <span class="k">public</span> <span class="nf">MyTimerJobExecution</span><span class="p">(</span><span class="kt">string</span> <span class="n">jobName</span><span class="p">,</span> <span class="n">SPWebApplication</span> <span class="n">webapp</span><span class="p">)</span>
-    <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">jobName</span><span class="p">,</span> <span class="n">webapp</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="n">SPJobLockType</span><span class="p">.</span><span class="n">ContentDatabase</span><span class="p">)</span>
+    <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="p">)</span>
     <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="n">Title</span> <span class="p">=</span> <span class="n">jobName</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="k">public</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">Execute</span><span class="p">(</span><span class="n">Guid</span> <span class="n">contentDbId</span><span class="p">)</span>
-    <span class="p">{</span>
-      <span class="k">try</span>
-      <span class="p">{</span>
-        <span class="c1">// execute your logic here</span>
-      <span class="p">}</span>
-      <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="p">)</span>
-      <span class="p">{</span>
-        <span class="c1">// do your logging here</span>
-        <span class="k">throw</span><span class="p">;</span>
-      <span class="p">}</span>
+      <span class="c1">// do your logging here</span>
+      <span class="k">throw</span><span class="p">;</span>
     <span class="p">}</span>
   <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
 
-<p>In this case we will be creating a feature with Web Application scope, which will allow us in a round about way to retrieve the web context derived from the web application context.</p>
+<p>In this case we will be creating a feature with Web Application scope. Notice that the second constructor takes a parameter of type SPService, this is what you might use if you had given your feature farm scope. In this instance we are interested in the third constructor as it takes a type of SPWebApplication as one of its parameters. We can then do something like the following in the above Execute method to derive a site url using the SPWebApplication context.</p>
+
+<div class="highlight"><pre><code class="language-c#" data-lang="c#"><span class="n">SPSecurity</span><span class="p">.</span><span class="n">RunWithElevatedPrivileges</span><span class="p">(</span><span class="k">delegate</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">SPWebApplication</span> <span class="n">webApplication</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="n">Parent</span> <span class="k">as</span> <span class="n">SPWebApplication</span><span class="p">;</span>  
+  <span class="n">SPContentDatabase</span> <span class="n">contentDb</span> <span class="p">=</span> <span class="n">webApplication</span><span class="p">.</span><span class="n">ContentDatabases</span><span class="p">[</span><span class="n">contentDbId</span><span class="p">];</span>
+
+  <span class="kt">string</span> <span class="n">siteUrl</span> <span class="p">=</span> <span class="kt">string</span><span class="p">.</span><span class="n">Empty</span><span class="p">;</span>
+
+  <span class="k">foreach</span> <span class="p">(</span><span class="n">SPSite</span> <span class="n">site</span> <span class="k">in</span> <span class="n">contentDb</span><span class="p">.</span><span class="n">Sites</span><span class="p">)</span>
+  <span class="p">{</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">site</span><span class="p">.</span><span class="n">RootWeb</span><span class="p">.</span><span class="n">Title</span> <span class="p">==</span> <span class="n">Constants</span><span class="p">.</span><span class="n">RootWebTitle</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="k">using</span> <span class="p">(</span><span class="n">SPSite</span> <span class="n">site</span> <span class="p">=</span> <span class="k">new</span> <span class="n">SPSite</span><span class="p">(</span><span class="n">site</span><span class="p">.</span><span class="n">RootWeb</span><span class="p">.</span><span class="n">Url</span><span class="p">))</span>
+      <span class="k">using</span> <span class="p">(</span><span class="n">SPWeb</span> <span class="n">web</span> <span class="p">=</span> <span class="n">site</span><span class="p">.</span><span class="n">OpenWeb</span><span class="p">())</span>
+      <span class="p">{</span>
+        <span class="c1">// web context in here</span>
+      <span class="p">}</span>
+
+      <span class="k">break</span><span class="p">;</span>
+
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">});</span></code></pre></div>
 
 <h2 id="create-the-event-receiver">Create the Event Receiver</h2>
-<p>Right click on your feature and select the option to create an event receiver class.
-{insert code}</p>
+<p>Right click on your feature and select the option to create an event receiver class.</p>
+
+<div class="highlight"><pre><code class="language-c#" data-lang="c#"><span class="na">[Guid(&quot;c876fbb3-6255-44e2-86ba-f9f7465ca816&quot;)]</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">CustomTimerJobEventReceiver</span> <span class="p">:</span> <span class="n">SPFeatureReceiver</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">FeatureActivated</span><span class="p">(</span><span class="n">SPFeatureReceiverProperties</span> <span class="n">properties</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">try</span>
+    <span class="p">{</span>
+      <span class="n">SPSecurity</span><span class="p">.</span><span class="n">RunWithElevatedPrivileges</span><span class="p">(</span><span class="k">delegate</span><span class="p">()</span>
+      <span class="p">{</span>
+          <span class="n">SPWebApplication</span> <span class="n">parentWebApp</span> <span class="p">=</span> <span class="p">(</span><span class="n">SPWebApplication</span><span class="p">)</span><span class="n">properties</span><span class="p">.</span><span class="n">Feature</span><span class="p">.</span><span class="n">Parent</span><span class="p">;</span>
+          <span class="n">SPSite</span> <span class="n">site</span> <span class="p">=</span> <span class="n">properties</span><span class="p">.</span><span class="n">Feature</span><span class="p">.</span><span class="n">Parent</span> <span class="k">as</span> <span class="n">SPSite</span><span class="p">;</span>
+          <span class="n">DeleteExistingJob</span><span class="p">(</span><span class="n">parentWebApp</span><span class="p">);</span>
+          <span class="n">CreateJob</span><span class="p">(</span><span class="n">parentWebApp</span><span class="p">);</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="c1">// do your logging here</span>
+      <span class="k">throw</span> <span class="n">ex</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">private</span> <span class="k">void</span> <span class="nf">CreateJob</span><span class="p">(</span><span class="n">SPWebApplication</span> <span class="n">site</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">try</span>
+    <span class="p">{</span>
+      <span class="n">CustomTimerJobExecution</span> <span class="n">job</span> <span class="p">=</span> <span class="k">new</span> <span class="n">CustomTimerJobExecution</span><span class="p">(</span><span class="s">&quot;Custom Timer Job&quot;</span><span class="p">,</span> <span class="n">site</span><span class="p">);</span>
+      <span class="n">job</span><span class="p">.</span><span class="n">Schedule</span> <span class="p">=</span> <span class="k">new</span> <span class="n">SPDailySchedule</span>
+      <span class="p">{</span>
+        <span class="n">BeginHour</span> <span class="p">=</span> <span class="m">02</span><span class="p">,</span>
+        <span class="n">BeginMinute</span> <span class="p">=</span> <span class="m">00</span><span class="p">,</span>
+        <span class="n">BeginSecond</span> <span class="p">=</span> <span class="m">0</span><span class="p">,</span>
+        <span class="n">EndHour</span> <span class="p">=</span> <span class="m">02</span><span class="p">,</span>
+        <span class="n">EndMinute</span> <span class="p">=</span> <span class="m">30</span><span class="p">,</span>
+        <span class="n">EndSecond</span> <span class="p">=</span> <span class="m">0</span><span class="p">,</span>
+      <span class="p">};</span>
+
+      <span class="n">job</span><span class="p">.</span><span class="n">Update</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="c1">// do your logging here</span>
+      <span class="k">throw</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">void</span> <span class="nf">DeleteExistingJob</span><span class="p">(</span><span class="n">SPWebApplication</span> <span class="n">site</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">try</span>
+    <span class="p">{</span>
+      <span class="k">foreach</span> <span class="p">(</span><span class="n">SPJobDefinition</span> <span class="n">job</span> <span class="k">in</span> <span class="n">site</span><span class="p">.</span><span class="n">JobDefinitions</span><span class="p">)</span>
+      <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">job</span><span class="p">.</span><span class="n">Name</span> <span class="p">==</span> <span class="s">&quot;Custom Timer Job&quot;</span><span class="p">)</span>
+        <span class="p">{</span>
+          <span class="n">job</span><span class="p">.</span><span class="n">Delete</span><span class="p">();</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="c1">// do your logging here</span>
+      <span class="k">throw</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">FeatureDeactivating</span><span class="p">(</span><span class="n">SPFeatureReceiverProperties</span> <span class="n">properties</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">try</span>
+    <span class="p">{</span>
+      <span class="n">SPSecurity</span><span class="p">.</span><span class="n">RunWithElevatedPrivileges</span><span class="p">(</span><span class="k">delegate</span><span class="p">()</span>
+      <span class="p">{</span>
+        <span class="n">SPWebApplication</span> <span class="n">parentWebApp</span> <span class="p">=</span> <span class="p">(</span><span class="n">SPWebApplication</span><span class="p">)</span><span class="n">properties</span><span class="p">.</span><span class="n">Feature</span><span class="p">.</span><span class="n">Parent</span><span class="p">;</span>
+        <span class="n">DeleteExistingJob</span><span class="p">(</span><span class="n">parentWebApp</span><span class="p">);</span>
+        <span class="p">});</span>
+      <span class="p">}</span>
+      <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="p">)</span>
+      <span class="p">{</span>
+        <span class="c1">// do your logging here</span>
+        <span class="k">throw</span> <span class="n">ex</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span></code></pre></div>
+
+<p>Extending SPFeatureReceiver we need to override two methods; FeatureActivated and FeatureDeactivating. Starting with FeatureActivated we can derive the SPWebApplication context from properties.Feature.Parent, properties being a parameter of type SPFeatureReceiverProperties.</p>
+
+<p>We can now call DeleteExistingJob method to remove the timer job if it already exists. While we on this method lets quickly jump to FeatureDeactivating method which simply calls DeleteExistingJob to remove the timer job. Back to FeatureActivated the timer job can now be created which is achieved by calling CreateJob method which creates an instance of our CustomTimerJobExecution class. Inherited from SPJobDefinition is the property Schedule which in this case we create a new SPDailySchedule. Speaking of scheduling we could have also chosen to <a href="https://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.spschedule(v=office.15).aspx">schedule by the minute, week, month or a one of event</a>.</p>
 
 <h2 id="mind-the-manifest">Mind the Manifest</h2>
 
@@ -72,7 +178,7 @@ Then create your three constructors and override execute method.</p>
 <h2 id="debugging-with-uls">Debugging with ULS</h2>
 <p>During your feature install it is advisable to be watching your <a href="https://msdn.microsoft.com/en-us/library/office/ff512738(v=office.14).aspx">ULS</a> logs in realtime, this will help identify the source of any exceptions. If you exception is complaining about your project assembly missing then it is likely you have an incorrect assembly mapping in you feature’s manifest (see above).</p>
 
-<p>Once your Timer Job feature is successfully installed you also want to watch for exceptions from the execution of the Timer Job. So launch your job from with SharePoint Central Admin {insert path} and pretty soon you should see your job kick off under the OWS{fullname} process, any exception raised by your code executed from with the Excecute override of SPJobDefinition method (see above) will now be apparent. As an alternative to ULC logging you can of course attach the Visual Studio debugger to the OWS{fullname} process, this however for reason’s unknown to me does not always work in my local development environment.</p>
+<p>Once your Timer Job feature is successfully installed you also want to watch for exceptions from the execution of the Timer Job. So launch your job from with SharePoint Central Admin; central admin -&gt; monitoring -&gt; timer jobs, and pretty soon you should see your job kick off under the OWSTIMER process, any exception raised by your code executed from with the Execute override of SPJobDefinition method (see above) will now be apparent. As an alternative to ULC logging you can of course attach the Visual Studio debugger to the OWSTIMER process, this however for reason’s unknown to me does not always work in my local development environment.</p>
 
 </div>
 

@@ -19,42 +19,38 @@ First thing you need to do is create a new class that extends SPJobDefinition.
 Then create your three constructors and override execute method.
 
 {% highlight c# %}
-namespace somenamespace
+public class CustomTimerJobExecution : SPJobDefinition
 {
+  public CustomTimerJobExecution() { }
 
-  public class MyTimerJobExecution : SPJobDefinition
+  public CustomTimerJobExecution(string jobName, SPService service)
+  : base(jobName, service, null, SPJobLockType.None)
   {
-    public MyTimerJobExecution() { }
+    this.Title = jobName;
+  }
 
-    public MyTimerJobExecution(string jobName, SPService service)
-    : base(jobName, service, null, SPJobLockType.None)
+  public CustomTimerJobExecution(string jobName, SPWebApplication webapp)
+  : base(jobName, webapp, null, SPJobLockType.ContentDatabase)
+  {
+    this.Title = jobName;
+  }
+
+  public override void Execute(Guid contentDbId)
+  {
+    try
     {
-      this.Title = jobName;
+      // execute your logic here
     }
-
-    public MyTimerJobExecution(string jobName, SPWebApplication webapp)
-    : base(jobName, webapp, null, SPJobLockType.ContentDatabase)
+    catch (Exception ex)
     {
-      this.Title = jobName;
-    }
-
-    public override void Execute(Guid contentDbId)
-    {
-      try
-      {
-        // execute your logic here
-      }
-      catch (Exception ex)
-      {
-        // do your logging here
-        throw;
-      }
+      // do your logging here
+      throw;
     }
   }
 }
 {% endhighlight %}
 
-In this case we will be creating a feature with Web Application scope, which will allow us in a round about way to retrieve the web context derived from the web application context. Notice that the second constructor takes a parameter of type SPService, this is what you might use if you had given your feature farm scope. In this instance we are interested in the third constructor as it takes a type of SPWebApplication as one of its parameters. We can then do something like the following in the above Execute method to derive a site url using the SPWebApplication context.
+In this case we will be creating a feature with Web Application scope. Notice that the second constructor takes a parameter of type SPService, this is what you might use if you had given your feature farm scope. In this instance we are interested in the third constructor as it takes a type of SPWebApplication as one of its parameters. We can then do something like the following in the above Execute method to derive a site url using the SPWebApplication context.
 
 {% highlight c# %}
 SPSecurity.RunWithElevatedPrivileges(delegate()
@@ -86,8 +82,95 @@ SPSecurity.RunWithElevatedPrivileges(delegate()
 Create the Event Receiver
 -------------------------
 Right click on your feature and select the option to create an event receiver class.
-{insert code}
 
+{% highlight c# %}
+[Guid("c876fbb3-6255-44e2-86ba-f9f7465ca816")]
+public class CustomTimerJobEventReceiver : SPFeatureReceiver
+{
+  public override void FeatureActivated(SPFeatureReceiverProperties properties)
+  {
+    try
+    {
+      SPSecurity.RunWithElevatedPrivileges(delegate()
+      {
+          SPWebApplication parentWebApp = (SPWebApplication)properties.Feature.Parent;
+          SPSite site = properties.Feature.Parent as SPSite;
+          DeleteExistingJob(parentWebApp);
+          CreateJob(parentWebApp);
+      });
+    }
+    catch (Exception ex)
+    {
+      // do your logging here
+      throw ex;
+    }
+  }
+
+  private void CreateJob(SPWebApplication site)
+  {
+    try
+    {
+      CustomTimerJobExecution job = new CustomTimerJobExecution("Custom Timer Job", site);
+      job.Schedule = new SPDailySchedule
+      {
+        BeginHour = 02,
+        BeginMinute = 00,
+        BeginSecond = 0,
+        EndHour = 02,
+        EndMinute = 30,
+        EndSecond = 0,
+      };
+
+      job.Update();
+    }
+    catch (Exception ex)
+    {
+      // do your logging here
+      throw;
+    }
+  }
+
+  public void DeleteExistingJob(SPWebApplication site)
+  {
+    try
+    {
+      foreach (SPJobDefinition job in site.JobDefinitions)
+      {
+        if (job.Name == "Custom Timer Job")
+        {
+          job.Delete();
+        }
+      }
+    }
+    catch (Exception ex)
+    {
+      // do your logging here
+      throw;
+    }
+  }
+
+  public override void FeatureDeactivating(SPFeatureReceiverProperties properties)
+  {
+    try
+    {
+      SPSecurity.RunWithElevatedPrivileges(delegate()
+      {
+        SPWebApplication parentWebApp = (SPWebApplication)properties.Feature.Parent;
+        DeleteExistingJob(parentWebApp);
+        });
+      }
+      catch (Exception ex)
+      {
+        // do your logging here
+        throw ex;
+      }
+    }
+  }
+{% endhighlight %}
+
+Extending SPFeatureReceiver we need to override two methods; FeatureActivated and FeatureDeactivating. Starting with FeatureActivated we can derive the SPWebApplication context from properties.Feature.Parent, properties being a parameter of type SPFeatureReceiverProperties.
+
+We can now call DeleteExistingJob method to remove the timer job if it already exists. While we on this method lets quickly jump to FeatureDeactivating method which simply calls DeleteExistingJob to remove the timer job. Back to FeatureActivated the timer job can now be created which is achieved by calling CreateJob method which creates an instance of our CustomTimerJobExecution class. Inherited from SPJobDefinition is the property Schedule which in this case we create a new SPDailySchedule. Speaking of scheduling we could have also chosen to [schedule by the minute, week, month or a one of event](https://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.spschedule(v=office.15).aspx).
 
 Mind the Manifest
 -----------------

@@ -168,12 +168,17 @@ Then create your three constructors and override execute method.</p>
 <p>We can now call DeleteExistingJob method to remove the timer job if it already exists. While we on this method lets quickly jump to FeatureDeactivating method which simply calls DeleteExistingJob to remove the timer job. Back to FeatureActivated the timer job can now be created which is achieved by calling CreateJob method which creates an instance of our CustomTimerJobExecution class. Inherited from SPJobDefinition is the property Schedule which in this case we create a new SPDailySchedule. Speaking of scheduling we could have also chosen to <a href="https://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.spschedule(v=office.15).aspx">schedule by the minute, week, month or a one of event</a>.</p>
 
 <h2 id="mind-the-manifest">Mind the Manifest</h2>
-
-<p>{insert code}</p>
+<p>Your feature’s manisfest file contains configuration data such as the Receiver Assembly name and importantly the Receiver Class, that is the feature’s event receiver. If at anytime you say change the class name of the event receiver Visual Studio will not automatically update the receiver class, which unless you manually correct, will cause the timer job installation and/or execution of it to fail.</p>
 
 <h2 id="installing">Installing</h2>
+<p>Once your projects Package{check name for this} contains the timer job feature you can deploy via visual studio or PowerShell. If the timer job feature is not hidden in the features properties configuration you will be able enable and disable it from SharePoint Central Administration under the web application’s list of features. However PowerShell is better:</p>
 
-<p>{insert powershell code }</p>
+<div class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="nb">Enable-SPFeature</span> <span class="n">-Identity</span> <span class="s2">&quot;CustomTimerJobFeature&quot;</span> <span class="n">-Url</span> <span class="p">{</span><span class="n">url</span> <span class="n">of</span> <span class="n">your</span> <span class="n">web</span> <span class="n">application</span><span class="p">}</span> <span class="n">-confirm</span><span class="err">:</span><span class="nv">$false</span></code></pre></div>
+
+<p>It often helps to then reboot all TimerService instances as your projects assembly files will often be cached by the Time Jobs OWSTIMER process.</p>
+
+<div class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="nv">$farm</span> <span class="p">=</span> <span class="nb">Get-SPFarm</span>
+<span class="nv">$farm</span><span class="p">.</span><span class="n">TimerService</span><span class="p">.</span><span class="n">Instances</span> <span class="p">|</span> <span class="k">foreach</span><span class="p">{</span><span class="nv">$_</span><span class="p">.</span><span class="n">Stop</span><span class="p">();</span><span class="nv">$_</span><span class="p">.</span><span class="n">Start</span><span class="p">();}</span></code></pre></div>
 
 <h2 id="debugging-with-uls">Debugging with ULS</h2>
 <p>During your feature install it is advisable to be watching your <a href="https://msdn.microsoft.com/en-us/library/office/ff512738(v=office.14).aspx">ULS</a> logs in realtime, this will help identify the source of any exceptions. If you exception is complaining about your project assembly missing then it is likely you have an incorrect assembly mapping in you feature’s manifest (see above).</p>

@@ -1,6 +1,8 @@
 ---
 layout: post
 title: Installing custom Timer Jobs in SharePoint 2013
+tags:
+  - SharePoint 2013
 ---
 
 {{ page.title }}
@@ -18,7 +20,7 @@ Extend SPJobDefinition
 First thing you need to do is create a new class that extends SPJobDefinition.
 Then create your three constructors and override execute method.
 
-{% highlight c# %}
+{% highlight C# %}
 public class CustomTimerJobExecution : SPJobDefinition
 {
   public CustomTimerJobExecution() { }
@@ -52,7 +54,7 @@ public class CustomTimerJobExecution : SPJobDefinition
 
 In this case we will be creating a feature with Web Application scope. Notice that the second constructor takes a parameter of type SPService, this is what you might use if you had given your feature farm scope. In this instance we are interested in the third constructor as it takes a type of SPWebApplication as one of its parameters. We can then do something like the following in the above Execute method to derive a site url using the SPWebApplication context.
 
-{% highlight c# %}
+{% highlight C# %}
 SPSecurity.RunWithElevatedPrivileges(delegate()
 {
   SPWebApplication webApplication = this.Parent as SPWebApplication;  
@@ -83,7 +85,7 @@ Create the Event Receiver
 -------------------------
 Right click on your feature and select the option to create an event receiver class.
 
-{% highlight c# %}
+{% highlight C# %}
 [Guid("c876fbb3-6255-44e2-86ba-f9f7465ca816")]
 public class CustomTimerJobEventReceiver : SPFeatureReceiver
 {
@@ -174,14 +176,22 @@ We can now call DeleteExistingJob method to remove the timer job if it already e
 
 Mind the Manifest
 -----------------
-
-{insert code}
+Your feature's manisfest file contains configuration data such as the Receiver Assembly name and importantly the Receiver Class, that is the feature's event receiver. If at anytime you say change the class name of the event receiver Visual Studio will not automatically update the receiver class, which unless you manually correct, will cause the timer job installation and/or execution of it to fail.
 
 Installing
 ----------
+Once your projects Package{check name for this} contains the timer job feature you can deploy via visual studio or PowerShell. If the timer job feature is not hidden in the features properties configuration you will be able enable and disable it from SharePoint Central Administration under the web application's list of features. However PowerShell is better:
 
-{insert powershell code }
+{% highlight PowerShell %}
+Enable-SPFeature -Identity "CustomTimerJobFeature" -Url {url of your web application} -confirm:$false
+{% endhighlight %}
 
+It often helps to then reboot all TimerService instances as your projects assembly files will often be cached by the Time Jobs OWSTIMER process.
+
+{% highlight PowerShell %}
+$farm = Get-SPFarm
+$farm.TimerService.Instances | foreach{$_.Stop();$_.Start();}
+{% endhighlight %}
 
 Debugging with ULS
 ------------------

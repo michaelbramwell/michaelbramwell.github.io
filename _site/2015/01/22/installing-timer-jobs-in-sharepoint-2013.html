@@ -12,10 +12,8 @@
   <div id="post">
 <h1 id="installing-custom-timer-jobs-in-sharepoint-2013">Installing custom Timer Jobs in SharePoint 2013</h1>
 
-<h2 id="status-draft">Status: Draft</h2>
-
 <h2 id="abstract">Abstract</h2>
-<p>There are plenty of articles which more or less detail the title of this post, <a href="https://msdn.microsoft.com/en-us/library/office/hh528519(v=office.14).aspx">msdn for example</a>, this is just what made sense for myself in the context of a SharePoint 2013 Timer Job that requires Web Application Feature scope.</p>
+<p>There are plenty of articles which more or less detail the title of this post, <a href="https://msdn.microsoft.com/en-us/library/office/hh528519(v=office.14).aspx">msdn for example</a>, this is just what made sense for myself in the context of a SharePoint 2013 Timer Job that requires Web Application Feature scope. Some of the code contained within is morphed from this <a href="http://www.codeproject.com/Tips/634208/Create-and-Deploy-Custom-Timer-Job-Definition-in-S">article</a></p>
 
 <h2 id="extend-spjobdefinition">Extend SPJobDefinition</h2>
 <p>First thing you need to do is create a new class that extends SPJobDefinition.
@@ -165,13 +163,14 @@ Then create your three constructors and override execute method.</p>
 
 <p>Extending SPFeatureReceiver we need to override two methods; FeatureActivated and FeatureDeactivating. Starting with FeatureActivated we can derive the SPWebApplication context from properties.Feature.Parent, properties being a parameter of type SPFeatureReceiverProperties.</p>
 
-<p>We can now call DeleteExistingJob method to remove the timer job if it already exists. While we on this method lets quickly jump to FeatureDeactivating method which simply calls DeleteExistingJob to remove the timer job. Back to FeatureActivated the timer job can now be created which is achieved by calling CreateJob method which creates an instance of our CustomTimerJobExecution class. Inherited from SPJobDefinition is the property Schedule which in this case we create a new SPDailySchedule. Speaking of scheduling we could have also chosen to <a href="https://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.spschedule(v=office.15).aspx">schedule by the minute, week, month or a one of event</a>.</p>
+<p>We can now call DeleteExistingJob method to remove the timer job if it already exists. While we on this method lets quickly jump to FeatureDeactivating method which simply calls DeleteExistingJob to remove the timer job. Back to FeatureActivated, the timer job can now be created which is achieved by calling CreateJob method which creates an instance of our CustomTimerJobExecution class. Inherited from SPJobDefinition is the property Schedule which in this case we create a new SPDailySchedule. Speaking of scheduling we could have also chosen to <a href="https://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.spschedule(v=office.15).aspx">schedule by the minute, week, month or a one of event</a>.</p>
 
 <h2 id="mind-the-manifest">Mind the Manifest</h2>
-<p>Your feature’s manisfest file contains configuration data such as the Receiver Assembly name and importantly the Receiver Class, that is the feature’s event receiver. If at anytime you say change the class name of the event receiver Visual Studio will not automatically update the receiver class, which unless you manually correct, will cause the timer job installation and/or execution of it to fail.</p>
+<p>Your feature’s manisfest file contains configuration data such as the Receiver Assembly name and importantly the Receiver Class, that is the feature’s event receiver. If at anytime you say change the class name of the event receiver Visual Studio will not automatically update the receiver class, which unless you manually correct, will cause the timer job installation and/or execution of it to fail.
+While we are in configuration land make sure the feature’s properties; ‘Activate On Default’ is set to false and ‘Always Force Install’ is set to true.</p>
 
 <h2 id="installing">Installing</h2>
-<p>Once your projects Package{check name for this} contains the timer job feature you can deploy via visual studio or PowerShell. If the timer job feature is not hidden in the features properties configuration you will be able enable and disable it from SharePoint Central Administration under the web application’s list of features. However PowerShell is better:</p>
+<p>Once your projects Package contains the timer job feature you can deploy via visual studio or PowerShell. If the timer job feature is not hidden in the features properties configuration you will be able enable and disable it from SharePoint Central Administration under the web application’s list of features. However PowerShell is better:</p>
 
 <div class="highlight"><pre><code class="language-powershell" data-lang="powershell"><span class="nb">Enable-SPFeature</span> <span class="n">-Identity</span> <span class="s2">&quot;CustomTimerJobFeature&quot;</span> <span class="n">-Url</span> <span class="p">{</span><span class="n">url</span> <span class="n">of</span> <span class="n">your</span> <span class="n">web</span> <span class="n">application</span><span class="p">}</span> <span class="n">-confirm</span><span class="err">:</span><span class="nv">$false</span></code></pre></div>
 
@@ -181,9 +180,9 @@ Then create your three constructors and override execute method.</p>
 <span class="nv">$farm</span><span class="p">.</span><span class="n">TimerService</span><span class="p">.</span><span class="n">Instances</span> <span class="p">|</span> <span class="k">foreach</span><span class="p">{</span><span class="nv">$_</span><span class="p">.</span><span class="n">Stop</span><span class="p">();</span><span class="nv">$_</span><span class="p">.</span><span class="n">Start</span><span class="p">();}</span></code></pre></div>
 
 <h2 id="debugging-with-uls">Debugging with ULS</h2>
-<p>During your feature install it is advisable to be watching your <a href="https://msdn.microsoft.com/en-us/library/office/ff512738(v=office.14).aspx">ULS</a> logs in realtime, this will help identify the source of any exceptions. If you exception is complaining about your project assembly missing then it is likely you have an incorrect assembly mapping in you feature’s manifest (see above).</p>
+<p>During your feature install it is advisable to be watching the tail on your  <a href="https://msdn.microsoft.com/en-us/library/office/ff512738(v=office.14).aspx">ULS</a> logs. This will help identify the source of any exceptions. If your exception is complaining about your project assembly missing then it is likely you have an incorrect assembly mapping in you feature’s manifest (see above).</p>
 
-<p>Once your Timer Job feature is successfully installed you also want to watch for exceptions from the execution of the Timer Job. So launch your job from with SharePoint Central Admin; central admin -&gt; monitoring -&gt; timer jobs, and pretty soon you should see your job kick off under the OWSTIMER process, any exception raised by your code executed from with the Execute override of SPJobDefinition method (see above) will now be apparent. As an alternative to ULC logging you can of course attach the Visual Studio debugger to the OWSTIMER process, this however for reason’s unknown to me does not always work in my local development environment.</p>
+<p>Once your Timer Job feature is successfully installed you will also want to watch for exceptions from the execution of the Timer Job. So launch your job from with SharePoint Central Admin; central admin -&gt; monitoring -&gt; timer jobs, and pretty soon you should see your job kick off under the OWSTIMER process, any exception raised by your code executed from with the Execute override of SPJobDefinition method (see above) will now be apparent. As an alternative to ULC logging; you can of course attach the Visual Studio debugger to the OWSTIMER process, this however for reason’s unknown to me does not always work in my local development environment.</p>
 
 </div>
 

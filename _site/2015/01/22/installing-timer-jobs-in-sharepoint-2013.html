@@ -9,8 +9,8 @@
 </head>
 <body>
   <div class="page">
-    <div id="post">
-<h1 id="installing-custom-timer-jobs-in-sharepoint-2013">Installing custom Timer Jobs in SharePoint 2013</h1>
+    <div id="article">
+      <h1 id="installing-custom-timer-jobs-in-sharepoint-2013">Installing custom Timer Jobs in SharePoint 2013</h1>
 
 <h2 id="abstract">Abstract</h2>
 <p>There are plenty of articles which more or less detail the title of this post, <a href="https://msdn.microsoft.com/en-us/library/office/hh528519(v=office.14).aspx">msdn for example</a>, this is just what made sense for myself in the context of a SharePoint 2013 Timer Job that requires Web Application Feature scope. Some of the code contained within is morphed from this <a href="http://www.codeproject.com/Tips/634208/Create-and-Deploy-Custom-Timer-Job-Definition-in-S">article</a></p>
@@ -184,8 +184,8 @@ While we are in configuration land make sure the feature’s properties; ‘Acti
 
 <p>Once your Timer Job feature is successfully installed you will also want to watch for exceptions from the execution of the Timer Job. So launch your job from with SharePoint Central Admin; central admin -&gt; monitoring -&gt; timer jobs, and pretty soon you should see your job kick off under the OWSTIMER process, any exception raised by your code executed from with the Execute override of SPJobDefinition method (see above) will now be apparent. As an alternative to ULC logging; you can of course attach the Visual Studio debugger to the OWSTIMER process, this however for reason’s unknown to me does not always work in my local development environment.</p>
 
-</div>
 
+    </div>
   </div>
 </body>
 </html>

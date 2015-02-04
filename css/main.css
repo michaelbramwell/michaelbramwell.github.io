@@ -1,9 +1,21 @@
 h1 {
-    font-size: 1.25em;
+    max-width: 100%;
+    font-weight: normal;
+    font-size: 1.5em;
+    line-height: 1.25em;
+    color: rgb(75, 75, 75);
+    text-align: start;
+    -webkit-hyphens: manual;
 }
 
 h2 {
-    font-size: 1.125em;
+  max-width: 100%;
+  font-weight: normal;
+  font-size: 1.3em;
+  line-height: 1.25em;
+  color: rgb(75, 75, 75);
+  text-align: start;
+  -webkit-hyphens: manual;
 }
 
 h3 {
@@ -20,8 +32,11 @@ figure {
 }
 .page
 {
-  font-family: Georgia, Palatino, Times, 'Times New Roman', serif; font-size: 18px; line-height: 28px;
+  font-family: Georgia, Palatino, Times, 'Times New Roman', serif;
+  font-size: 18px;
+  line-height: 28px;
   width: 50%;
+  color: rgb(65, 65, 65);
 }
 
 .page.rtl {
@@ -29,7 +44,21 @@ figure {
 }
 
 #article {
-    text-rendering: optimizeLegibility;
+  margin-left: 20px;
+  padding: 20px;
+  text-rendering: optimizeLegibility;
+  background: rgb(251, 251, 251);
+  background-size: 640px 254px;
+  max-width: 800px;
+  margin: 22px auto 0 auto;
+  padding-top: 12px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+  overflow-x: hidden;
+  z-index: 0;
+  outline: none;
+  pointer-events: auto;
+  -webkit-user-select: auto;
+  -webkit-font-smoothing: subpixel-antialiased;
 }
 
 #article pre {
@@ -131,6 +160,9 @@ figure {
 #article .list-style-type-none > li {
     list-style-type: none;
     -webkit-padding-start: 0;
+}
+.highlight {
+  font-size: 16px;
 }
 
 /* Collapse excess whitespace. */

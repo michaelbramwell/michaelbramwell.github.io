@@ -61,7 +61,7 @@ Then create your three constructors and override execute method.</p>
   <span class="k">foreach</span> <span class="p">(</span><span class="n">SPSite</span> <span class="n">site</span> <span class="k">in</span> <span class="n">contentDb</span><span class="p">.</span><span class="n">Sites</span><span class="p">)</span>
   <span class="p">{</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">site</span><span class="p">.</span><span class="n">RootWeb</span><span class="p">.</span><span class="n">Title</span> <span class="p">==</span> <span class="n">Constants</span><span class="p">.</span><span class="n">RootWebTitle</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">site</span><span class="p">.</span><span class="n">RootWeb</span><span class="p">.</span><span class="n">Title</span> <span class="p">==</span> <span class="s">&quot;Your Root Web Title&quot;</span><span class="p">)</span>
     <span class="p">{</span>
       <span class="k">using</span> <span class="p">(</span><span class="n">SPSite</span> <span class="n">site</span> <span class="p">=</span> <span class="k">new</span> <span class="n">SPSite</span><span class="p">(</span><span class="n">site</span><span class="p">.</span><span class="n">RootWeb</span><span class="p">.</span><span class="n">Url</span><span class="p">))</span>
       <span class="k">using</span> <span class="p">(</span><span class="n">SPWeb</span> <span class="n">web</span> <span class="p">=</span> <span class="n">site</span><span class="p">.</span><span class="n">OpenWeb</span><span class="p">())</span>
@@ -182,7 +182,7 @@ While we are in configuration land make sure the feature’s properties; ‘Acti
 <h2 id="debugging-with-uls">Debugging with ULS</h2>
 <p>During your feature install it is advisable to be watching the tail on your  <a href="https://msdn.microsoft.com/en-us/library/office/ff512738(v=office.14).aspx">ULS</a> logs. This will help identify the source of any exceptions. If your exception is complaining about your project assembly missing then it is likely you have an incorrect assembly mapping in you feature’s manifest (see above).</p>
 
-<p>Once your Timer Job feature is successfully installed you will also want to watch for exceptions from the execution of the Timer Job. So launch your job from with SharePoint Central Admin; central admin -&gt; monitoring -&gt; timer jobs, and pretty soon you should see your job kick off under the OWSTIMER process, any exception raised by your code executed from with the Execute override of SPJobDefinition method (see above) will now be apparent. As an alternative to ULC logging; you can of course attach the Visual Studio debugger to the OWSTIMER process, this however for reason’s unknown to me does not always work in my local development environment.</p>
+<p>Once your Timer Job feature is successfully installed you will also want to watch for exceptions from the execution of the Timer Job. So launch your job from with SharePoint Central Admin; central admin -&gt; monitoring -&gt; timer jobs, and pretty soon you should see your job kick off under the OWSTIMER process, any exception raised by your code executed from with the Execute override of SPJobDefinition method (see above) will now be apparent. As an alternative to ULS logging; you can of course attach the Visual Studio debugger to the OWSTIMER process, this however for reason’s unknown to me does not always work in my local development environment.</p>
 
 
     </div>

@@ -62,7 +62,7 @@ SPSecurity.RunWithElevatedPrivileges(delegate()
   foreach (SPSite site in contentDb.Sites)
   {
 
-    if (site.RootWeb.Title == Constants.RootWebTitle)
+    if (site.RootWeb.Title == "Your Root Web Title")
     {
       using (SPSite site = new SPSite(site.RootWeb.Url))
       using (SPWeb web = site.OpenWeb())
@@ -195,4 +195,4 @@ Debugging with ULS
 ------------------
 During your feature install it is advisable to be watching the tail on your  [ULS](https://msdn.microsoft.com/en-us/library/office/ff512738(v=office.14).aspx) logs. This will help identify the source of any exceptions. If your exception is complaining about your project assembly missing then it is likely you have an incorrect assembly mapping in you feature's manifest (see above).
 
-Once your Timer Job feature is successfully installed you will also want to watch for exceptions from the execution of the Timer Job. So launch your job from with SharePoint Central Admin; central admin -> monitoring -> timer jobs, and pretty soon you should see your job kick off under the OWSTIMER process, any exception raised by your code executed from with the Execute override of SPJobDefinition method (see above) will now be apparent. As an alternative to ULC logging; you can of course attach the Visual Studio debugger to the OWSTIMER process, this however for reason's unknown to me does not always work in my local development environment.
+Once your Timer Job feature is successfully installed you will also want to watch for exceptions from the execution of the Timer Job. So launch your job from with SharePoint Central Admin; central admin -> monitoring -> timer jobs, and pretty soon you should see your job kick off under the OWSTIMER process, any exception raised by your code executed from with the Execute override of SPJobDefinition method (see above) will now be apparent. As an alternative to ULS logging; you can of course attach the Visual Studio debugger to the OWSTIMER process, this however for reason's unknown to me does not always work in my local development environment.

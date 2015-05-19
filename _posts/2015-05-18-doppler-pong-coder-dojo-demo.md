@@ -98,3 +98,21 @@ First we need to run the Dopple Pong game website, which you can git clone from 
 python -m SimpleHTTPServer
 {% endhighlight %}
 
+Its worth having a look at doppler.js under the assets dir even if you don't understand eveything that is going on (I know I don't). Like the above simple examples an oscillator is generated at a constant frequency, inaudible to the human ears at 20000 khz, and anaylised as is read back via the microphone. Also have a quick look at the game code, most of the action is in game.js which replies heavily on a physics library for things like world creation, collision detection and particle creation. Like we are the doing the Pong game is also relying on another open source project to do alot of the heavily lifting. Open source is good like that :) .
+
+First thing we need to do is initiate the doppler library in the game code. In index.html add the following code.
+
+{% highlight JS %}
+window.addEventListener('load', function() {
+	window.doppler.init(function(bandwidth) {
+		var threshold = 4;
+		if (bandwidth.left > threshold || bandwidth.right > threshold) {
+			window.dopplerBandwidth = bandwidth;
+		}
+	});
+});
+{% endhighlight %}
+
+By calling doppler.js init function we now have access to its bandwidth object which contains left and right properties. The property with the highest count determines which direction to send the paddle, i.e up or down. While we are at it the Doppler.js code is a nice example of how to structure an object in javascript. Something Andy Osmani call [Immediately-invoked Function Expressions (IIFE)s](http://addyosmani.com/blog/essential-js-namespacing/).
+
+Game.js props...

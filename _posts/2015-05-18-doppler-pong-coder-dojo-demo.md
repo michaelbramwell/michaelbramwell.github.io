@@ -115,4 +115,27 @@ window.addEventListener('load', function() {
 
 By calling doppler.js init function we now have access to its bandwidth object which contains left and right properties. The property with the highest count determines which direction to send the paddle, i.e up or down. While we are at it the Doppler.js code is a nice example of how to structure an object in javascript. Something Andy Osmani call [Immediately-invoked Function Expressions (IIFE)s](http://addyosmani.com/blog/essential-js-namespacing/).
 
-Game.js props...
+The rest of our code goes in game.js which is where most of the game logic lies. Lets start by adding some properties to the constructor.
+
+{% highlight JS %}
+var dopplerEasingUpCount;
+var dopplerEasingDownCount;
+var dopplerPaddleDirection;
+{% endhighlight %}
+
+Then initialise them some default values. The variable names gives a good clue to what we will use them todo.
+{% highlight JS %}
+this.dopplerEasingUpCount = 100;
+this.dopplerEasingDownCount = 100;
+this.dopplerPaddleDirection = 'up'
+{% endhighlight %}
+
+We also need to put these three lines in the reset function.
+
+The rest of code is in the update function which fires at 60 times/frames per second which is required for smooth game playback. The first thing we need to do here is make the left panel computer controlled so we only have to worry about controlling the right paddle.
+
+{% highlight JS %}
+this.paddle1.body.y = this.ball.y;
+{% endhighlight %}
+ more update code...
+

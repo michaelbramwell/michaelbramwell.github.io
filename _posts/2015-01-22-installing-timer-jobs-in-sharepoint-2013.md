@@ -18,6 +18,7 @@ First thing you need to do is create a new class that extends SPJobDefinition.
 Then create your three constructors and override execute method.
 
 {% highlight C# %}
+<pre>
 public class CustomTimerJobExecution : SPJobDefinition
 {
   public CustomTimerJobExecution() { }
@@ -47,6 +48,7 @@ public class CustomTimerJobExecution : SPJobDefinition
     }
   }
 }
+</pre>
 {% endhighlight %}
 
 In this case we will be creating a feature with Web Application scope. Notice that the second constructor takes a parameter of type SPService, this is what you might use if you had given your feature farm scope. In this instance we are interested in the third constructor as it takes a type of SPWebApplication as one of its parameters. We can then do something like the following in the above Execute method to derive a site url using the SPWebApplication context.

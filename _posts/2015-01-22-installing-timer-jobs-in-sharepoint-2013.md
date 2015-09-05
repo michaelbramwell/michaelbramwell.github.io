@@ -5,9 +5,6 @@ tags:
   - SharePoint 2013
 ---
 
-{{ page.title }}
-================
-
 Abstract
 --------
 There are plenty of articles which more or less detail the title of this post, [msdn for example](https://msdn.microsoft.com/en-us/library/office/hh528519(v=office.14).aspx), this is just what made sense for myself in the context of a SharePoint 2013 Timer Job that requires Web Application Feature scope. Some of the code contained within is morphed from this [article](http://www.codeproject.com/Tips/634208/Create-and-Deploy-Custom-Timer-Job-Definition-in-S)
@@ -17,7 +14,6 @@ Extend SPJobDefinition
 First thing you need to do is create a new class that extends SPJobDefinition.
 Then create your three constructors and override execute method.
 
-{% highlight C# %}
 <pre>
 public class CustomTimerJobExecution : SPJobDefinition
 {
@@ -49,11 +45,10 @@ public class CustomTimerJobExecution : SPJobDefinition
   }
 }
 </pre>
-{% endhighlight %}
 
 In this case we will be creating a feature with Web Application scope. Notice that the second constructor takes a parameter of type SPService, this is what you might use if you had given your feature farm scope. In this instance we are interested in the third constructor as it takes a type of SPWebApplication as one of its parameters. We can then do something like the following in the above Execute method to derive a site url using the SPWebApplication context.
 
-{% highlight C# %}
+<pre>
 SPSecurity.RunWithElevatedPrivileges(delegate()
 {
   SPWebApplication webApplication = this.Parent as SPWebApplication;  
@@ -77,14 +72,13 @@ SPSecurity.RunWithElevatedPrivileges(delegate()
     }
   }
 });
-{% endhighlight %}
-
+</pre>
 
 Create the Event Receiver
 -------------------------
 Right click on your feature and select the option to create an event receiver class.
 
-{% highlight C# %}
+<pre>
 [Guid("c876fbb3-6255-44e2-86ba-f9f7465ca816")]
 public class CustomTimerJobEventReceiver : SPFeatureReceiver
 {
@@ -167,7 +161,7 @@ public class CustomTimerJobEventReceiver : SPFeatureReceiver
       }
     }
   }
-{% endhighlight %}
+</pre>
 
 Extending SPFeatureReceiver we need to override two methods; FeatureActivated and FeatureDeactivating. Starting with FeatureActivated we can derive the SPWebApplication context from properties.Feature.Parent, properties being a parameter of type SPFeatureReceiverProperties.
 
@@ -182,16 +176,16 @@ Installing
 ----------
 Once your projects Package contains the timer job feature you can deploy via visual studio or PowerShell. If the timer job feature is not hidden in the features properties configuration you will be able enable and disable it from SharePoint Central Administration under the web application's list of features. However PowerShell is better:
 
-{% highlight PowerShell %}
+<pre>
 Enable-SPFeature -Identity "CustomTimerJobFeature" -Url {url of your web application} -confirm:$false
-{% endhighlight %}
+</pre>
 
 It often helps to then reboot all TimerService instances as your projects assembly files will often be cached by the Time Jobs OWSTIMER process.
 
-{% highlight PowerShell %}
+<pre>
 $farm = Get-SPFarm
 $farm.TimerService.Instances | foreach{$_.Stop();$_.Start();}
-{% endhighlight %}
+</pre>
 
 Debugging with ULS
 ------------------

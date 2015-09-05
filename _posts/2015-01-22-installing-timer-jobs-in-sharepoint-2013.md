@@ -1,9 +1,5 @@
----
-layout: post
-title: Installing custom Timer Jobs in SharePoint 2013
-tags:
-  - SharePoint 2013
----
+Installing custom Timer Jobs in SharePoint 2013
+===============================================
 
 Abstract
 --------

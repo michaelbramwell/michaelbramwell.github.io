@@ -1,16 +1,5 @@
----
-layout: post
-title: 'Doppler Pong' Demo for the Mt Lawely CoderDojo
-tags:
-  - Coderdojo
-  - Doppler
-  - Pong
-  - HTML5
-  - Javascript
----
-
-{{ page.title }}
-================
+Doppler Pong Coder Dojo Demo
+============================
 
 Draft - In progress
 -------------------
